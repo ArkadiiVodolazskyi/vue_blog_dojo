@@ -1,5 +1,12 @@
 module.exports = {
   root: true,
+  lintOnSave: false,
+	devServer: {
+    overlay: {
+      warnings: false,
+      errors: true
+    }
+  },
   env: {
     node: true,
   },
