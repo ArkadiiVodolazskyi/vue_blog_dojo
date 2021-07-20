@@ -1,36 +1,50 @@
 <template>
   <div class="home">
-    <h2>Search from names</h2>
-    <input type="text" v-model="searchValue">
-    <ul>
-      <li v-for="name in searchNames" :key="name">
-        {{ name }}
-      </li>
-    </ul>
+    <h2>All posts</h2>
+    <div class="layout">
+      <PostsList :posts="posts" />
+      <TagsCloud :posts="posts" />
+    </div>
+    <div class="loading" v-if="!posts.length">
+      <Spinner />
+    </div>
+    <div class="error" v-if="error">
+      {{ error }}
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
-import { computed } from '@vue/runtime-core';
+import PostsList from '../components/PostsList.vue';
+import Spinner from '../components/Spinner.vue';
+import TagsCloud from '../components/TagsCloud.vue';
+import getPosts from '../composables/getPosts.js';
 
 export default {
+  components: { PostsList, Spinner, TagsCloud },
   name: "Home",
   setup() {
+    const { posts, error, load } = getPosts();
 
-    const searchValue = ref('');
-    const names = ref(['Arkadii', 'Luda', 'Alexey', 'Alla', 'Rita', 'Veniamin']);
-
-    const searchNames = computed(() => {
-      return names.value.filter((name) => {
-        return name.includes(searchValue.value);
-      })
-    });
+    load();
 
     return {
-      searchValue,
-      searchNames
+      posts,
+      error
     }
   }
 };
 </script>
+
+<style>
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
+  }
+</style>
